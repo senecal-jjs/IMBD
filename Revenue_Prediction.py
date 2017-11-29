@@ -9,7 +9,6 @@ def calculate(data):
     numerical_data = data[0]     # fb_likes, budget, revenue
     categorical_data = data[1]   # revenues associated with each genre
 
-
     # Calculate correlations among numerical data types
     pearson_fb_likes = pearsonr(numerical_data.fb_likes, numerical_data.revenue)
     pearson_budget = pearsonr(numerical_data.budget, numerical_data.revenue)
