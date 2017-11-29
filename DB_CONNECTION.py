@@ -21,7 +21,7 @@ def retrieve_data(in_query):
         # Query for revenue prediction
         query1 = ("SELECT P_ID, BUDGET, CAST_FACEBOOK_LIKES, REVENUE "
                   "FROM PRODUCTION, MOVIE "
-                  "WHERE P_ID = MP_ID AND REVENUE IS NOT NULL;")
+                  "WHERE P_ID = MP_ID AND REVENUE IS NOT NULL AND BUDGET IS NOT NULL AND CAST_FACEBOOK_LIKES IS NOT NULL;")
 
         query2 = ("SELECT CATEGORY, REVENUE "
                   "FROM GENRE, MOVIE "

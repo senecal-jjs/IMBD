@@ -1,5 +1,6 @@
 from Tkinter import *
 import DB_CONNECTION
+import Revenue_Prediction
 
 
 class BuildMenu(Frame):
@@ -34,7 +35,9 @@ class BuildMenu(Frame):
         load_button.grid(row=4, column=0)
 
     def predict_revenue(self):
-        pass
+        data = DB_CONNECTION.retrieve_data("predict_revenue")
+        Revenue_Prediction.calculate(data)
+
 
     def genre_popularity(self):
         pass
@@ -50,9 +53,9 @@ class BuildMenu(Frame):
 
 
 if __name__ == '__main__':
-    # root = Tk()
-    # app = BuildMenu(root)
-    # root.mainloop()
+    root = Tk()
+    app = BuildMenu(root)
+    root.mainloop()
 
-    dat = DB_CONNECTION.retrieve_data("runtime_analysis")
-    print(dat.content['PG-13'])
+    # dat = DB_CONNECTION.retrieve_data("runtime_analysis")
+    # print(dat.content['PG-13'])
