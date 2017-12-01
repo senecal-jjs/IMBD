@@ -1,6 +1,7 @@
 from Tkinter import *
 import DB_CONNECTION
 import Revenue_Prediction
+import Popularity
 
 
 class BuildMenu(Frame):
@@ -38,9 +39,9 @@ class BuildMenu(Frame):
         data = DB_CONNECTION.retrieve_data("predict_revenue")
         Revenue_Prediction.calculate(data)
 
-
     def genre_popularity(self):
-        pass
+        data = DB_CONNECTION.retrieve_data("genre_popularity")
+        Popularity.calculate(data)
 
     def predict_rating(self):
         pass

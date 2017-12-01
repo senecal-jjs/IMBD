@@ -48,8 +48,8 @@ def retrieve_data(in_query):
         return data_pt(budget, cast_facebook_likes, revenue), genre_revenue
 
     elif in_query == "genre_popularity":
-        data_pt = collections.namedtuple('data_pt', ('user_rating', 'fb_likes'))
-        query = ("SELECT CATEGORY, USER_RATING, FACEBOOK_LIKES "
+        data_pt = collections.namedtuple('data_pt', ('user_rating', 'fb_likes', 'pts'))
+        query = ("SELECT CATEGORY, USER_RATING, FACEBOOK_LIKES, RELEASE_YEAR "
                  "FROM  GENRE, PRODUCTION "
                  "WHERE P_ID = GP_ID; ")
 
@@ -57,11 +57,13 @@ def retrieve_data(in_query):
 
         genre_user = collections.defaultdict(list)
         genre_fb = collections.defaultdict(list)
-        for (CATEGORY, USER_RATING, FACEBOOK_LIKES) in cursor:
+        instances = []
+        for (CATEGORY, USER_RATING, FACEBOOK_LIKES, RELEASE_YEAR) in cursor:
             genre_user[CATEGORY].append(float(USER_RATING))
             genre_fb[CATEGORY].append(int(FACEBOOK_LIKES))
+            instances.append((CATEGORY, USER_RATING, FACEBOOK_LIKES, RELEASE_YEAR))
 
-        return data_pt(genre_user, genre_fb)
+        return data_pt(genre_user, genre_fb, instances)
 
     elif in_query == "predict_rating":
         data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes'))
