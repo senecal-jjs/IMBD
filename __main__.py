@@ -1,7 +1,10 @@
 from Tkinter import *
 import numpy as np
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import DB_CONNECTION
 import Revenue_Prediction
 import Popularity
@@ -41,13 +44,15 @@ class BuildMenu(Frame):
         load_button.grid(row=0, column=4)
 
         # Text Box
-        self.text = Text(root, height=5, width=30)
+        self.text = Text(root, height=5, width=60)
         self.text.pack(side=RIGHT, fill=BOTH, expand=1)
-        self.text.insert(INSERT, "Hello.....")
 
         # Embed figure for plots into GUI
-        self.f = Figure(figsize=(7, 6), dpi=80)
-        self.ax0 = self.f.add_axes((0.1, .1, 1, 1), axisbg=(0.75, 0.75, 0.75), frameon=True)
+        # self.f = Figure(figsize=(7, 6), dpi=80)
+        # self.ax0 = self.f.add_axes((0.1, .1, 1, 1), frameon=True)
+        self.f = plt.figure(1)
+        self.ax = self.f.add_subplot(111)
+        plt.ion()
 
         self.canvas = FigureCanvasTkAgg(self.f, self.master)
         self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
@@ -55,12 +60,14 @@ class BuildMenu(Frame):
 
     # Call the predict revenue analysis
     def predict_revenue(self):
-        self.ax0.set_xlabel('Time (s)')
-        self.ax0.set_ylabel('Frequency (Hz)')
-        self.ax0.plot(np.max(np.random.rand(100, 10) * 10, axis=1), "r-")
-        self.canvas.show()
+        self.text.delete(1.0, END)
+        # self.ax0.set_xlabel('Time (s)')
+        # self.ax0.set_ylabel('Frequency (Hz)')
+        # self.ax0.plot(np.max(np.random.rand(100, 10) * 10, axis=1), "r-")
         data = DB_CONNECTION.retrieve_data("predict_revenue")
-        Revenue_Prediction.calculate(data)
+        Revenue_Prediction.calculate(self, data)
+        self.f.canvas.draw()
+        # self.canvas.show()
 
     # Call the genre popularity analysis
     def genre_popularity(self):

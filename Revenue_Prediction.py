@@ -9,6 +9,7 @@ from sklearn.neighbors.kde import KernelDensity
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 from sklearn import datasets
+from Tkinter import *
 
 '''This module contains the functionality to perfrom the revenue prediction analysis'''
 
@@ -16,7 +17,7 @@ from sklearn import datasets
 '''Print the logistic regression and mlp score'''
 
 
-def calculate(data):
+def calculate(frame, data):
     numerical_data = data[0]     # fb_likes, budget, revenue, release year, runtime
     categorical_data = data[1]   # revenues associated with each genre
 
@@ -30,6 +31,14 @@ def calculate(data):
     s_budget = spearmanr(numerical_data.budget, numerical_data.revenue)
     s_release = spearmanr(numerical_data.budget, numerical_data.revenue)
     s_runtime = spearmanr(numerical_data.runtime, numerical_data.revenue)
+
+    # Print correlation results to screen
+    frame.text.insert(INSERT, "Correlation Results:\nCast Facebook Likes & Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "Budget and Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "Release Year and Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "Runtime and Revenue, Pearson: %.2f; Spearman: %.2f"
+                              % (p_fb_likes[0], s_fb_likes[0], p_budget[0], s_budget[0], p_release[0], s_release[0],
+                                 p_runtime[0], s_runtime[0]))
 
     # Revenue class prediction with logistic regression
     data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes', 'revenue', 'release', 'runtime'))
@@ -107,11 +116,13 @@ def calculate(data):
         kde = KernelDensity(kernel='gaussian', bandwidth=10000000).fit(X)
         log_pdf = kde.score_samples(x_grid[:, np.newaxis])
 
-        distributions[key] = log_pdf
+        distributions[key] = np.exp(log_pdf)
 
-        plt.plot(x_grid, np.exp(log_pdf))
-        plt.title(key)
-        plt.show()
+    frame.ax.plot(x_grid, distributions['Animation'], label="Animation")
+    frame.ax.plot(x_grid, distributions['Action'], label="Action")
+
+    handles, labels = frame.ax.get_legend_handles_labels()
+    frame.ax.legend(handles, labels)
 
 
 
