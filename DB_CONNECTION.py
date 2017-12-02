@@ -16,12 +16,12 @@ def retrieve_data(in_query):
     cursor = cnx.cursor()
 
     if in_query == "predict_revenue":
-        data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes', 'revenue'))
+        data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes', 'revenue', 'release', 'runtime'))
 
         # Query for revenue prediction
-        query1 = ("SELECT P_ID, BUDGET, CAST_FACEBOOK_LIKES, REVENUE "
+        query1 = ("SELECT P_ID, BUDGET, CAST_FACEBOOK_LIKES, REVENUE, RELEASE_YEAR, RUNTIME "
                   "FROM PRODUCTION, MOVIE "
-                  "WHERE P_ID = MP_ID AND REVENUE IS NOT NULL AND BUDGET IS NOT NULL AND CAST_FACEBOOK_LIKES IS NOT NULL;")
+                  "WHERE P_ID = MP_ID AND REVENUE IS NOT NULL AND BUDGET IS NOT NULL AND CAST_FACEBOOK_LIKES IS NOT NULL AND RELEASE_YEAR IS NOT NULL AND RUNTIME IS NOT NULL;")
 
         query2 = ("SELECT CATEGORY, REVENUE "
                   "FROM GENRE, MOVIE "
@@ -33,10 +33,14 @@ def retrieve_data(in_query):
         budget = []
         cast_facebook_likes = []
         revenue = []
-        for (P_ID, BUDGET, CAST_FACEBOOK_LIKES, REVENUE) in cursor:
+        release = []
+        runtime = []
+        for (P_ID, BUDGET, CAST_FACEBOOK_LIKES, REVENUE, RELEASE_YEAR, RUNTIME) in cursor:
             budget.append(BUDGET)
             cast_facebook_likes.append(CAST_FACEBOOK_LIKES)
             revenue.append(REVENUE)
+            release.append(RELEASE_YEAR)
+            runtime.append(RUNTIME)
 
         # Collect data from the second query
         cursor.execute(query2)
@@ -45,7 +49,7 @@ def retrieve_data(in_query):
         for (CATEGORY, REVENUE) in cursor:
             genre_revenue[CATEGORY].append(REVENUE)
 
-        return data_pt(budget, cast_facebook_likes, revenue), genre_revenue
+        return data_pt(budget, cast_facebook_likes, revenue, release, runtime), genre_revenue
 
     elif in_query == "genre_popularity":
         data_pt = collections.namedtuple('data_pt', ('user_rating', 'fb_likes', 'pts'))
@@ -66,21 +70,19 @@ def retrieve_data(in_query):
         return data_pt(genre_user, genre_fb, instances)
 
     elif in_query == "predict_rating":
-        data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes'))
+        data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes', 'runtime', 'release', 'rating'))
 
-        query = ("SELECT BUDGET, CAST_FACEBOOK_LIKES "
+        query = ("SELECT BUDGET, CAST_FACEBOOK_LIKES, USER_RATING, RUNTIME, RELEASE_YEAR "
                  "FROM  MOVIE, PRODUCTION "
-                 "WHERE P_ID = MP_ID; ")
+                 "WHERE P_ID = MP_ID AND BUDGET IS NOT NULL AND CAST_FACEBOOK_LIKES IS NOT NULL AND USER_RATING IS NOT NULL AND RUNTIME IS NOT NULL AND RELEASE_YEAR IS NOT NULL; ")
 
         cursor.execute(query)
 
-        budget = []
-        fb_likes = []
-        for (BUDGET, CAST_FACEBOOK_LIKES) in cursor:
-            budget.append(BUDGET)
-            fb_likes.append(CAST_FACEBOOK_LIKES)
+        data = []
+        for (BUDGET, CAST_FACEBOOK_LIKES, USER_RATING, RUNTIME, RELEASE_YEAR) in cursor:
+            data.append(data_pt(int(BUDGET), int(CAST_FACEBOOK_LIKES), int(RUNTIME), int(RELEASE_YEAR), float(USER_RATING)))
 
-        return data_pt(budget, fb_likes)
+        return data
 
     elif in_query == "content_rating":
         data_pt = collections.namedtuple('data_pt', ('budget', 'revenue'))

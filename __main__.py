@@ -2,6 +2,7 @@ from Tkinter import *
 import DB_CONNECTION
 import Revenue_Prediction
 import Popularity
+import Rating_Prediction
 
 
 class BuildMenu(Frame):
@@ -44,7 +45,8 @@ class BuildMenu(Frame):
         Popularity.calculate(data)
 
     def predict_rating(self):
-        pass
+        data = DB_CONNECTION.retrieve_data("predict_rating")
+        Rating_Prediction.calculate(data)
 
     def content_rating(self):
         pass
