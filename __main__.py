@@ -26,21 +26,26 @@ class BuildMenu(Frame):
 
         # Button to select genre popularity
         load_button = Button(self, text="Genre Popularity", command=self.genre_popularity)
-        load_button.grid(row=1, column=0)
+        load_button.grid(row=0, column=1)
 
         # Button to select user rating prediction
         load_button = Button(self, text="Predict User Rating", command=self.predict_rating)
-        load_button.grid(row=2, column=0)
+        load_button.grid(row=0, column=2)
 
         # Button to select content rating analysis
         load_button = Button(self, text="Content Rating Analysis", command=self.content_rating)
-        load_button.grid(row=3, column=0)
+        load_button.grid(row=0, column=3)
 
         # Button to select runtime analysis
         load_button = Button(self, text="Runtime Analysis", command=self.runtime_analysis)
-        load_button.grid(row=4, column=0)
+        load_button.grid(row=0, column=4)
 
-        # Embed figure into GUI
+        # Text Box
+        self.text = Text(root, height=5, width=30)
+        self.text.pack(side=RIGHT, fill=BOTH, expand=1)
+        self.text.insert(INSERT, "Hello.....")
+
+        # Embed figure for plots into GUI
         self.f = Figure(figsize=(7, 6), dpi=80)
         self.ax0 = self.f.add_axes((0.1, .1, 1, 1), axisbg=(0.75, 0.75, 0.75), frameon=True)
 
