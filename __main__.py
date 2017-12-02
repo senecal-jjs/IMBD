@@ -1,4 +1,7 @@
 from Tkinter import *
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 import DB_CONNECTION
 import Revenue_Prediction
 import Popularity
@@ -13,9 +16,7 @@ class BuildMenu(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.master = master
-        self.init_gui()
 
-    def init_gui(self):
         self.master.title("IMBD Data Analysis")
         self.pack(fill=BOTH, expand=1)
 
@@ -39,8 +40,20 @@ class BuildMenu(Frame):
         load_button = Button(self, text="Runtime Analysis", command=self.runtime_analysis)
         load_button.grid(row=4, column=0)
 
+        # Embed figure into GUI
+        self.f = Figure(figsize=(7, 6), dpi=80)
+        self.ax0 = self.f.add_axes((0.1, .1, 1, 1), axisbg=(0.75, 0.75, 0.75), frameon=True)
+
+        self.canvas = FigureCanvasTkAgg(self.f, self.master)
+        self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        self.canvas.show()
+
     # Call the predict revenue analysis
     def predict_revenue(self):
+        self.ax0.set_xlabel('Time (s)')
+        self.ax0.set_ylabel('Frequency (Hz)')
+        self.ax0.plot(np.max(np.random.rand(100, 10) * 10, axis=1), "r-")
+        self.canvas.show()
         data = DB_CONNECTION.retrieve_data("predict_revenue")
         Revenue_Prediction.calculate(data)
 
