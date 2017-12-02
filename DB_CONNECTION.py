@@ -89,7 +89,7 @@ def retrieve_data(in_query):
 
         query = ("SELECT BUDGET, REVENUE, CONTENT_RATING "
                  "FROM  MOVIE "
-                 "WHERE CONTENT_RATING IS NOT NULL; ")
+                 "WHERE CONTENT_RATING IS NOT NULL AND BUDGET IS NOT NULL AND REVENUE IS NOT NULL; ")
 
         cursor.execute(query)
 

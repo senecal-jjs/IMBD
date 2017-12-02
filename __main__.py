@@ -3,6 +3,8 @@ import DB_CONNECTION
 import Revenue_Prediction
 import Popularity
 import Rating_Prediction
+import Content_Rating
+import Runtime
 
 
 class BuildMenu(Frame):
@@ -49,10 +51,12 @@ class BuildMenu(Frame):
         Rating_Prediction.calculate(data)
 
     def content_rating(self):
-        pass
+        data = DB_CONNECTION.retrieve_data("content_rating")
+        Content_Rating.calculate(data)
 
     def runtime_analysis(self):
-        pass
+        data = DB_CONNECTION.retrieve_data("runtime_analysis")
+        Runtime.calculate(data)
 
 
 if __name__ == '__main__':
