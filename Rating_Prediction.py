@@ -6,6 +6,11 @@ from sklearn.preprocessing import StandardScaler
 import random
 import numpy as np
 
+'''This module contains the functionality to perfrom the user rating prediction analysis'''
+
+'''Print each of the correlations'''
+'''Print the MLP Score'''
+
 
 def calculate(data):
     # create list of budget, user_rating, runtimes, release year and cast fb likes for correlation analysis

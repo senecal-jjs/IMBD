@@ -3,6 +3,8 @@ import numpy as np
 import collections
 import matplotlib.pyplot as plt
 
+'''Print the summary statistics in rating_runtime_stat and genre_runtime_stat'''
+
 
 def calculate(data):
     # Calculate summary statistics for common ratings (G, PG, PG-13, R)

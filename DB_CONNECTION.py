@@ -1,9 +1,11 @@
 import mysql.connector
 import collections
 
+'''This module containes the database connection functionality for executing queries'''
+
 
 def retrieve_data(in_query):
-
+    # Set up configuration settings for the local database
     config = {
       'user': 'root',
       'password': 'password',
@@ -12,9 +14,11 @@ def retrieve_data(in_query):
       'raise_on_warnings': True,
     }
 
+    # Connect to database
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor()
 
+    # Revenue prediction query
     if in_query == "predict_revenue":
         data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes', 'revenue', 'release', 'runtime'))
 
@@ -30,6 +34,7 @@ def retrieve_data(in_query):
         # Collect data from the first query
         cursor.execute(query1)
 
+        # Arrange data fields into lists
         budget = []
         cast_facebook_likes = []
         revenue = []
@@ -45,12 +50,14 @@ def retrieve_data(in_query):
         # Collect data from the second query
         cursor.execute(query2)
 
+        # Arrange revenues associated with a particular genre into a dictionary
         genre_revenue = collections.defaultdict(list)
         for (CATEGORY, REVENUE) in cursor:
             genre_revenue[CATEGORY].append(REVENUE)
 
         return data_pt(budget, cast_facebook_likes, revenue, release, runtime), genre_revenue
 
+    # Genre popularity query
     elif in_query == "genre_popularity":
         data_pt = collections.namedtuple('data_pt', ('user_rating', 'fb_likes', 'pts'))
         query = ("SELECT CATEGORY, USER_RATING, FACEBOOK_LIKES, RELEASE_YEAR "
@@ -59,6 +66,7 @@ def retrieve_data(in_query):
 
         cursor.execute(query)
 
+        # Arrange user rating and cast facebook likes associated with each genre into dictionaries
         genre_user = collections.defaultdict(list)
         genre_fb = collections.defaultdict(list)
         instances = []

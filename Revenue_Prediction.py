@@ -10,6 +10,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 from sklearn import datasets
 
+'''This module contains the functionality to perfrom the revenue prediction analysis'''
+
+'''Print each of the correlations'''
+'''Print the logistic regression and mlp score'''
+
 
 def calculate(data):
     numerical_data = data[0]     # fb_likes, budget, revenue, release year, runtime

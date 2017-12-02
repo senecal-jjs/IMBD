@@ -6,12 +6,13 @@ import Rating_Prediction
 import Content_Rating
 import Runtime
 
+'''This module contains the functionality for the GUI'''
+
 
 class BuildMenu(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.master = master
-    #kfjpasjdf;jasdfj
         self.init_gui()
 
     def init_gui(self):
@@ -38,22 +39,27 @@ class BuildMenu(Frame):
         load_button = Button(self, text="Runtime Analysis", command=self.runtime_analysis)
         load_button.grid(row=4, column=0)
 
+    # Call the predict revenue analysis
     def predict_revenue(self):
         data = DB_CONNECTION.retrieve_data("predict_revenue")
         Revenue_Prediction.calculate(data)
 
+    # Call the genre popularity analysis
     def genre_popularity(self):
         data = DB_CONNECTION.retrieve_data("genre_popularity")
         Popularity.calculate(data)
 
+    # Call the user rating prediction analysis
     def predict_rating(self):
         data = DB_CONNECTION.retrieve_data("predict_rating")
         Rating_Prediction.calculate(data)
 
+    # Call the content rating analysis
     def content_rating(self):
         data = DB_CONNECTION.retrieve_data("content_rating")
         Content_Rating.calculate(data)
 
+    # Call the runtime analysis
     def runtime_analysis(self):
         data = DB_CONNECTION.retrieve_data("runtime_analysis")
         Runtime.calculate(data)
@@ -63,6 +69,3 @@ if __name__ == '__main__':
     root = Tk()
     app = BuildMenu(root)
     root.mainloop()
-
-    # dat = DB_CONNECTION.retrieve_data("runtime_analysis")
-    # print(dat.content['PG-13'])

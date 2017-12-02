@@ -4,6 +4,8 @@ from sklearn.neighbors.kde import KernelDensity
 from scipy.stats.stats import f_oneway
 import matplotlib.pyplot as plt
 
+'''Print the summary statistics in rating_budget_stat and rating_reveneue_stat'''
+
 
 def calculate(data):
     # Calculate summary statistics for common ratings (G, PG, PG-13, R)
