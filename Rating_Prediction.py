@@ -5,9 +5,15 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import StandardScaler
 import random
 import numpy as np
+from Tkinter import *
+
+'''This module contains the functionality to perform the user rating prediction analysis'''
+
+'''Print each of the correlations'''
+'''Print the MLP Score'''
 
 
-def calculate(data):
+def calculate(frame, data):
     # create list of budget, user_rating, runtimes, release year and cast fb likes for correlation analysis
     budget = []
     user = []
@@ -53,7 +59,23 @@ def calculate(data):
     X_test = scaler.transform(X_test)
 
     mlp.fit(X_train, Y[:cut])
-    print("MLP score: %s" % mlp.score(X_test, Y[cut:]))
+    mlp_score = mlp.score(X_test, Y[cut:])
+
+    # Print results to screen
+    frame.text.insert(INSERT, "Correlation Results:\nCast Facebook Likes & User Rating, Pearson: %.2f; Spearman: %.2f\n"
+                              "Budget and User Rating, Pearson: %.2f; Spearman: %.2f\n"
+                              "Runtime and User Rating, Pearson: %.2f; Spearman: %.2f\n"
+                              "Release Year and User Rating, Pearson: %.2f; Spearman: %.2f\n"
+                              "\nNeural Network R^2 Score: %.2f\n"
+                              "\n"
+                      % (p_fb_likes[0], s_fb_likes[0], p_budget[0], s_budget[0], p_runtime[0], s_runtime[0],
+                         p_release[0], s_release[0], mlp_score))
+
+    # Send plot of top revenue earning genre probability distributions to GUI
+    frame.ax.scatter(release, user)
+    frame.ax.set_title("Release Year vs. User Rating")
+    frame.ax.set_xlabel('Release Year')
+    frame.ax.set_ylabel('User Rating')
 
 
 
