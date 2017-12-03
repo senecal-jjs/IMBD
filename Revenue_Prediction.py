@@ -2,13 +2,11 @@ import numpy as np
 import random
 import collections
 from operator import itemgetter
-import matplotlib.pyplot as plt
 from scipy.stats.stats import pearsonr
 from scipy.stats.stats import spearmanr
 from sklearn.neighbors.kde import KernelDensity
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
-from sklearn import datasets
 from Tkinter import *
 
 '''This module contains the functionality to perfrom the revenue prediction analysis'''
@@ -21,6 +19,16 @@ def calculate(frame, data):
     numerical_data = data[0]     # fb_likes, budget, revenue, release year, runtime
     categorical_data = data[1]   # revenues associated with each genre
 
+    # Calculate revenue summary statistics for the Genres
+    stat = collections.namedtuple('stat', ('mean', 'min', 'max', 'stdev'))
+
+    genre_revenue_stat = {}  # Revenue Statistics associated with each genre
+    for key in categorical_data.keys():
+        genre_revenue_stat[key] = stat(round(np.mean(categorical_data[key]), 2), round(np.min(categorical_data[key]), 2),
+                                       round(np.max(categorical_data[key]), 2), round(np.std(categorical_data[key]), 2))
+
+    print(sorted(genre_revenue_stat, key=lambda k: genre_revenue_stat[k][0]))
+
     # Calculate correlations among numerical data types
     p_fb_likes = pearsonr(numerical_data.fb_likes, numerical_data.revenue)
     p_budget = pearsonr(numerical_data.budget, numerical_data.revenue)
@@ -29,18 +37,9 @@ def calculate(frame, data):
 
     s_fb_likes = spearmanr(numerical_data.fb_likes, numerical_data.revenue)
     s_budget = spearmanr(numerical_data.budget, numerical_data.revenue)
-    s_release = spearmanr(numerical_data.budget, numerical_data.revenue)
+    s_release = spearmanr(numerical_data.release, numerical_data.revenue)
     s_runtime = spearmanr(numerical_data.runtime, numerical_data.revenue)
 
-    # Print correlation results to screen
-    frame.text.insert(INSERT, "Correlation Results:\nCast Facebook Likes & Revenue, Pearson: %.2f; Spearman: %.2f\n"
-                              "Budget and Revenue, Pearson: %.2f; Spearman: %.2f\n"
-                              "Release Year and Revenue, Pearson: %.2f; Spearman: %.2f\n"
-                              "Runtime and Revenue, Pearson: %.2f; Spearman: %.2f"
-                              % (p_fb_likes[0], s_fb_likes[0], p_budget[0], s_budget[0], p_release[0], s_release[0],
-                                 p_runtime[0], s_runtime[0]))
-
-    # Revenue class prediction with logistic regression
     data_pt = collections.namedtuple('data_pt', ('budget', 'fb_likes', 'revenue', 'release', 'runtime'))
 
     associated_data = []
@@ -99,11 +98,25 @@ def calculate(frame, data):
         Xt.append(instance[0])
         Yt.append(instance[1])
 
-    print("Logistic Regression score: %s" % model.score(Xt, Yt))
+    log_score = model.score(Xt, Yt)
 
-    mlp = MLPClassifier(hidden_layer_sizes=(30, 30), activation='tanh', max_iter = 500, verbose=True, shuffle=True)
+    mlp = MLPClassifier(hidden_layer_sizes=(30, 30), activation='tanh', max_iter = 500, verbose=False, shuffle=True)
     mlp.fit(X, Y)
-    print("MLP Score: %s" % mlp.score(Xt, Yt))
+    mlp_score = mlp.score(Xt, Yt)
+
+    # Print results to screen
+    frame.text.insert(INSERT, "Correlation Results:\nCast Facebook Likes & Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "Budget and Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "Release Year and Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "Runtime and Revenue, Pearson: %.2f; Spearman: %.2f\n"
+                              "\nLogistic Regression Classification Accuracy: %.2f\n"
+                              "\nNeural Network Classification Accuracy: %.2f\n"
+                              "\n"
+                      % (p_fb_likes[0], s_fb_likes[0], p_budget[0], s_budget[0], p_release[0], s_release[0],
+                         p_runtime[0], s_runtime[0], log_score, mlp_score))
+
+    for key in genre_revenue_stat.keys():
+        frame.text.insert(END, "\n" + str(key) + ": " + str(genre_revenue_stat[key]) + "\n")
 
     # Calculate probability distribution for each genre
     distributions = {}
@@ -118,8 +131,14 @@ def calculate(frame, data):
 
         distributions[key] = np.exp(log_pdf)
 
+    # Send plot of top revenue earning genre probability distributions to GUI
     frame.ax.plot(x_grid, distributions['Animation'], label="Animation")
-    frame.ax.plot(x_grid, distributions['Action'], label="Action")
+    frame.ax.plot(x_grid, distributions['Family'], label="Family")
+    frame.ax.plot(x_grid, distributions['Adventure'], label="Adventure")
+    frame.ax.plot(x_grid, distributions['Sci-Fi'], label="Sci-Fi")
+    frame.ax.set_title("Probability Dist. for Top Revenue Earning Genres")
+    frame.ax.set_xlabel('Revenue (USD)')
+    frame.ax.set_ylabel('Probability')
 
     handles, labels = frame.ax.get_legend_handles_labels()
     frame.ax.legend(handles, labels)
