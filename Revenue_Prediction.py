@@ -8,6 +8,8 @@ from sklearn.neighbors.kde import KernelDensity
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 from Tkinter import *
+import matplotlib.pyplot as plt
+import os
 
 '''This module contains the functionality to perfrom the revenue prediction analysis'''
 
@@ -131,6 +133,63 @@ def calculate(frame, data):
 
         distributions[key] = np.exp(log_pdf)
 
+        frame.ax.plot(x_grid, np.exp(log_pdf))
+        frame.ax.set_title(str(key) + " Revenue Probability Distribution")
+        frame.ax.set_xlabel("Revenue (USD)")
+        frame.ax.set_ylabel("Probability")
+
+        frame.f.savefig("Plots/" + str(key) + "_revenue_dist")
+        frame.ax.cla()
+
+    # Save correlation plots to file
+    frame.ax.scatter(numerical_data.budget, numerical_data.revenue)
+    frame.ax.set_title("Budget vs Revenue")
+    frame.ax.set_xlabel("Budget (USD)")
+    frame.ax.set_ylabel("Revenue (USD)")
+    frame.f.savefig("Plots/_budget_revenue_corr")
+    frame.ax.cla()
+
+    frame.ax.scatter(numerical_data.fb_likes, numerical_data.revenue)
+    frame.ax.set_title("Cast Facebook Likes vs Revenue")
+    frame.ax.set_xlabel("Cast Facebook Likes")
+    frame.ax.set_ylabel("Revenue (USD)")
+    frame.f.savefig("Plots/_cast_fb_likes_revenue_corr")
+    frame.ax.cla()
+
+    frame.ax.scatter(numerical_data.release, numerical_data.revenue)
+    frame.ax.set_title("Release Year vs Revenue")
+    frame.ax.set_xlabel("Release Year")
+    frame.ax.set_ylabel("Revenue (USD)")
+    frame.f.savefig("Plots/_release_year_revenue_corr")
+    frame.ax.cla()
+
+    frame.ax.scatter(numerical_data.runtime, numerical_data.revenue)
+    frame.ax.set_title("Runtime vs Revenue")
+    frame.ax.set_xlabel("Runtime (min)")
+    frame.ax.set_ylabel("Revenue (USD)")
+    frame.f.savefig("Plots/_runtime_revenue_corr")
+    frame.ax.cla()
+
+    # Save bar charts of mean revenue
+    means = []
+    stdev = []
+    names = []
+
+    for key in genre_revenue_stat.keys():
+        if key == "Sci-Fi" or key == "Family" or key == "Adventure" or key == "Animation":
+            means.append(genre_revenue_stat[key].mean)
+            stdev.append(genre_revenue_stat[key].stdev)
+            names.append(key)
+
+    ind = np.arange(len(means))
+    frame.ax.set_ylabel('Revenue (USD)')
+    frame.ax.set_title('Revenue by Genre')
+    frame.ax.set_xticks([p + 0.2 for p in ind])
+    frame.ax.set_xticklabels(names)
+    frame.ax.bar(ind, means, width = 0.5)
+    frame.f.savefig("Plots/bar_genre_revenue")
+    frame.ax.cla()
+
     # Send plot of top revenue earning genre probability distributions to GUI
     frame.ax.plot(x_grid, distributions['Animation'], label="Animation")
     frame.ax.plot(x_grid, distributions['Family'], label="Family")
@@ -142,6 +201,5 @@ def calculate(frame, data):
 
     handles, labels = frame.ax.get_legend_handles_labels()
     frame.ax.legend(handles, labels)
-
 
 

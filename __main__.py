@@ -41,7 +41,7 @@ class BuildMenu(Frame):
         load_button = Button(self, text="Runtime Analysis", command=self.runtime_analysis)
         load_button.grid(row=0, column=4)
 
-        # Text Box
+        # Text Box to display summary of analysis
         self.text = Text(root, height=5, width=60)
         self.text.pack(side=RIGHT, fill=BOTH, expand=1)
 
@@ -61,13 +61,16 @@ class BuildMenu(Frame):
         data = DB_CONNECTION.retrieve_data("predict_revenue")
         Revenue_Prediction.calculate(self, data)
         self.f.canvas.draw()
+        self.f.savefig("Plots/_revenue_dist")
 
     # Call the genre popularity analysis
     def genre_popularity(self):
         self.text.delete(1.0, END)
         self.ax.cla()
         data = DB_CONNECTION.retrieve_data("genre_popularity")
-        Popularity.calculate(data)
+        Popularity.calculate(self, data)
+        self.f.canvas.draw()
+        self.f.savefig("Plots/user_rating_genre_dist")
 
     # Call the user rating prediction analysis
     def predict_rating(self):
@@ -76,20 +79,25 @@ class BuildMenu(Frame):
         data = DB_CONNECTION.retrieve_data("predict_rating")
         Rating_Prediction.calculate(self, data)
         self.f.canvas.draw()
+        self.f.savefig("Plots/user_rating_prediction")
 
     # Call the content rating analysis
     def content_rating(self):
         self.text.delete(1.0, END)
         self.ax.cla()
         data = DB_CONNECTION.retrieve_data("content_rating")
-        Content_Rating.calculate(data)
+        Content_Rating.calculate(self, data)
+        self.f.canvas.draw()
+        self.f.savefig("Plots/bubble")
 
     # Call the runtime analysis
     def runtime_analysis(self):
         self.text.delete(1.0, END)
         self.ax.cla()
         data = DB_CONNECTION.retrieve_data("runtime_analysis")
-        Runtime.calculate(data)
+        Runtime.calculate(self, data)
+        self.f.canvas.draw()
+        self.f.savefig("Plots/content_rating_runtime_dist")
 
 
 if __name__ == '__main__':
