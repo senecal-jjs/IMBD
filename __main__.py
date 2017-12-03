@@ -1,9 +1,7 @@
 from Tkinter import *
-import numpy as np
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import DB_CONNECTION
 import Revenue_Prediction
@@ -48,8 +46,6 @@ class BuildMenu(Frame):
         self.text.pack(side=RIGHT, fill=BOTH, expand=1)
 
         # Embed figure for plots into GUI
-        # self.f = Figure(figsize=(7, 6), dpi=80)
-        # self.ax0 = self.f.add_axes((0.1, .1, 1, 1), frameon=True)
         self.f = plt.figure(1)
         self.ax = self.f.add_subplot(111)
         plt.ion()
@@ -61,31 +57,37 @@ class BuildMenu(Frame):
     # Call the predict revenue analysis
     def predict_revenue(self):
         self.text.delete(1.0, END)
-        # self.ax0.set_xlabel('Time (s)')
-        # self.ax0.set_ylabel('Frequency (Hz)')
-        # self.ax0.plot(np.max(np.random.rand(100, 10) * 10, axis=1), "r-")
+        self.ax.cla()
         data = DB_CONNECTION.retrieve_data("predict_revenue")
         Revenue_Prediction.calculate(self, data)
         self.f.canvas.draw()
-        # self.canvas.show()
 
     # Call the genre popularity analysis
     def genre_popularity(self):
+        self.text.delete(1.0, END)
+        self.ax.cla()
         data = DB_CONNECTION.retrieve_data("genre_popularity")
         Popularity.calculate(data)
 
     # Call the user rating prediction analysis
     def predict_rating(self):
+        self.text.delete(1.0, END)
+        self.ax.cla()
         data = DB_CONNECTION.retrieve_data("predict_rating")
-        Rating_Prediction.calculate(data)
+        Rating_Prediction.calculate(self, data)
+        self.f.canvas.draw()
 
     # Call the content rating analysis
     def content_rating(self):
+        self.text.delete(1.0, END)
+        self.ax.cla()
         data = DB_CONNECTION.retrieve_data("content_rating")
         Content_Rating.calculate(data)
 
     # Call the runtime analysis
     def runtime_analysis(self):
+        self.text.delete(1.0, END)
+        self.ax.cla()
         data = DB_CONNECTION.retrieve_data("runtime_analysis")
         Runtime.calculate(data)
 
