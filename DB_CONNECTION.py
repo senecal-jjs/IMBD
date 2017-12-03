@@ -6,7 +6,7 @@ def retrieve_data(in_query):
 
     config = {
       'user': 'root',
-      'password': 'password',
+      'password': 'Tanner2122!',
       'host': 'localhost',
       'database': 'mydb',
       'raise_on_warnings': True,
